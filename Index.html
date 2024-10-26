@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Points with Specified Colors</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .point {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .button-container {
+            position: fixed;
+            top: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        .blue { background-color: blue; }
+        .red { background-color: red; }
+        .pink { background-color: pink; }
+        .orange { background-color: orange; }
+        #points-display {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button class="blue" onclick="removePointsByColor('rgb(0, 0, 255)')">Blue</button>
+        <button class="red" onclick="removePointsByColor('rgb(255, 0, 0)')">Red</button>
+        <button class="pink" onclick="removePointsByColor('rgb(255, 168, 212)')">Pink</button>
+        <button class="orange" onclick="removePointsByColor('rgb(255, 229, 180)')">Orange</button>
+    </div>
+    <div id="points-display"></div>
+    
+    <script>
+        const colors = ['#FFE5B4', '#FFA8D4', '#FF0000', '#0000FF']; // Including blue color (#0000FF)
+        let removedColors = new Set(); // Tracks removed colors
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function getRandomColor() {
+            return colors[getRandomInt(0, colors.length - 1)];
+        }
+
+        function createRandomPoint() {
+            const point = document.createElement('div');
+            point.className = 'point';
+            const color = getRandomColor();
+            point.style.backgroundColor = color;
+            point.style.left = `${getRandomInt(0, window.innerWidth)}px`;
+            point.style.top = `${getRandomInt(0, window.innerHeight)}px`;
+            document.body.appendChild(point);
+        }
+
+        function generateRandomPoints(count) {
+            for (let i = 0; i < count; i++) {
+                createRandomPoint();
+            }
+        }
+
+        function removePointsByColor(targetColor) {
+            const points = document.querySelectorAll('.point');
+            points.forEach(point => {
+                const pointColor = window.getComputedStyle(point).backgroundColor;
+                if (pointColor === targetColor) {
+                    point.remove();
+                }
+            });
+
+            // Track the removed color
+            removedColors.add(targetColor);
+
+            // Check if all colors have been removed
+            if (removedColors.size === colors.length) {
+                awardPoints();
+            }
+        }
+
+        function awardPoints() {
+            const pointsDisplay = document.getElementById('points-display');
+            pointsDisplay.textContent = "Congratulations! You've earned 10 points!";
+        }
+
+        // Generate 100 random points on page load
+        window.onload = () => generateRandomPoints(100);
+
+    </script>
+</body>
+</html>
